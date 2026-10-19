@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+  </defs>
+  <rect width="1000" height="520" rx="16" fill="#ffffff"/>
+  <text x="40" y="52" font-size="24" font-weight="700" fill="#0f172a">AI Machine-Safety Interlock — how a stop happens</text>
+  <text x="40" y="80" font-size="14" fill="#64748b">15 RTSP cameras · one batched YOLO pass · Modbus coils to a Delta PLC · two machines controlled independently</text>
+
+  <!-- cameras -->
+  <g font-size="13" fill="#0f172a">
+    <rect x="40" y="120" width="150" height="250" rx="12" fill="#eff6ff" stroke="#93c5fd"/>
+    <text x="115" y="146" text-anchor="middle" font-weight="700">15 IP cameras</text>
+    <g fill="#ffffff" stroke="#93c5fd">
+      <rect x="60" y="162" width="110" height="30" rx="6"/><rect x="60" y="200" width="110" height="30" rx="6"/>
+      <rect x="60" y="238" width="110" height="30" rx="6"/><rect x="60" y="276" width="110" height="30" rx="6"/>
+    </g>
+    <text x="115" y="182" text-anchor="middle">Cam 1 · Machine A</text>
+    <text x="115" y="220" text-anchor="middle">Cam 2 · Machine A</text>
+    <text x="115" y="258" text-anchor="middle">Cam 3 · Machine B</text>
+    <text x="115" y="296" text-anchor="middle">…  Cam 15</text>
+    <text x="115" y="340" text-anchor="middle" fill="#64748b" font-size="12">RTSP, auto-reconnect</text>
+  </g>
+
+  <!-- detector -->
+  <g font-size="13" fill="#0f172a">
+    <rect x="240" y="120" width="190" height="250" rx="12" fill="#f5f3ff" stroke="#c4b5fd"/>
+    <text x="335" y="146" text-anchor="middle" font-weight="700">Detection</text>
+    <text x="335" y="178" text-anchor="middle">All frames in ONE</text>
+    <text x="335" y="196" text-anchor="middle">batched fp16 YOLOv8 pass</text>
+    <line x1="260" y1="214" x2="410" y2="214" stroke="#ddd6fe"/>
+    <text x="335" y="240" text-anchor="middle">Low confidence threshold</text>
+    <text x="335" y="258" text-anchor="middle">→ finds far / hidden people</text>
+    <line x1="260" y1="276" x2="410" y2="276" stroke="#ddd6fe"/>
+    <text x="335" y="302" text-anchor="middle">Shape filter removes</text>
+    <text x="335" y="320" text-anchor="middle">pipes &amp; machine frames</text>
+  </g>
+
+  <!-- zones -->
+  <g font-size="13" fill="#0f172a">
+    <rect x="480" y="120" width="210" height="250" rx="12" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="585" y="146" text-anchor="middle" font-weight="700">Zone rules</text>
+    <rect x="498" y="162" width="174" height="56" rx="8" fill="#e2e8f0"/>
+    <text x="585" y="185" text-anchor="middle" font-weight="600">blind — outside the wall</text>
+    <text x="585" y="205" text-anchor="middle" font-size="12">ignored if the feet are inside</text>
+    <rect x="498" y="226" width="174" height="56" rx="8" fill="#bbf7d0"/>
+    <text x="585" y="249" text-anchor="middle" font-weight="600">safe — allowed to stand</text>
+    <text x="585" y="269" text-anchor="middle" font-size="12">ignored only if whole body inside</text>
+    <text x="585" y="306" text-anchor="middle" font-size="12">Masks follow the camera when</text>
+    <text x="585" y="324" text-anchor="middle" font-size="12">it drifts; too much drift → masks</text>
+    <text x="585" y="342" text-anchor="middle" font-size="12">switched off (more sensitive)</text>
+  </g>
+
+  <!-- plc -->
+  <g font-size="13" fill="#0f172a">
+    <rect x="740" y="120" width="220" height="250" rx="12" fill="#fef2f2" stroke="#fca5a5"/>
+    <text x="850" y="146" text-anchor="middle" font-weight="700">PLC output (Modbus)</text>
+    <rect x="760" y="164" width="180" height="52" rx="8" fill="#ffffff" stroke="#fca5a5"/>
+    <text x="850" y="186" text-anchor="middle" font-weight="600">Machine A · coil 0</text>
+    <text x="850" y="204" text-anchor="middle" font-size="12">TRUE = stop</text>
+    <rect x="760" y="226" width="180" height="52" rx="8" fill="#ffffff" stroke="#fca5a5"/>
+    <text x="850" y="248" text-anchor="middle" font-weight="600">Machine B · coil 1</text>
+    <text x="850" y="266" text-anchor="middle" font-size="12">TRUE = stop</text>
+    <text x="850" y="306" text-anchor="middle" font-size="12">Each machine stops only for</text>
+    <text x="850" y="324" text-anchor="middle" font-size="12">its own cameras and restarts</text>
+    <text x="850" y="342" text-anchor="middle" font-size="12">on its own timer</text>
+  </g>
+
+  <g stroke="#475569" stroke-width="2" marker-end="url(#a)">
+    <line x1="192" y1="245" x2="236" y2="245"/>
+    <line x1="432" y1="245" x2="476" y2="245"/>
+    <line x1="692" y1="245" x2="736" y2="245"/>
+  </g>
+
+  <!-- fail safe band -->
+  <rect x="40" y="400" width="920" height="90" rx="12" fill="#fffbeb" stroke="#fcd34d"/>
+  <text x="60" y="428" font-size="15" font-weight="700" fill="#92400e">Fail-safe: when the system cannot prove an area is clear, it treats it as occupied</text>
+  <text x="60" y="454" font-size="13" fill="#78350f">Camera offline &gt; 30 s → its machine is held stopped  ·  Start-up → machines start stopped  ·  Person briefly hidden → 4 clear frames needed</text>
+  <text x="60" y="476" font-size="13" fill="#78350f">PLC unreachable → loud on-screen alarm (a stop cannot be sent over a dead link, so it is never silently "logged")</text>
+</svg>
